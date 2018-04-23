@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="SimpleBatch"
+     xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+     version="1.0">
+
+    <step id="FirstStep" next="SecondStep">
+      <chunk item-count="3">
+        <reader    ref="SimpleReader" />
+        <processor ref="SimpleProcessor" /> 
+        <writer    ref="SimpleWriter" />
+      </chunk>
+    </step>
+  
+    <step id="SecondStep">
+        <batchlet ref="SimpleBatchlet" />
+    </step>    
+</job>

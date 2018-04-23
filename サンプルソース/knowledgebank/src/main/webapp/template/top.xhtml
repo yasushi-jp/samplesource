@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition>
+            <div class="top_buttons">
+                <h:form id="logoutForm">
+                    <h:commandButton action="#{loginBean.logout()}" value="ログアウト" />
+                </h:form>
+            </div>
+            <div class="top_account">
+                <h:outputText value="一般" rendered="#{facesContext.externalContext.isUserInRole('user')}" />
+                <h:outputText value="管理者" rendered="#{facesContext.externalContext.isUserInRole('admin')}" />
+                ようこそ #{loginSession.account.name} さん
+            </div>
+            <div class="top_title">
+                <h:link outcome="/knowledge/index"><h:graphicImage library="img" name="logo.png" /></h:link>
+            </div>
+        </ui:composition>
+    </body>
+</html>

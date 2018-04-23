@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+     version="1.0"
+     id="KbDailyBatch">
+    
+  <properties>
+    <property name="asOf" value ="#{jobParameters['asofdate']}" />
+  </properties>
+  
+  <split id="Main" next="StatusCheck">
+      
+    <flow id="KnowledgeRanking">
+      <step id="CountKnowledge" next="SortTempCsv_KR">
+        <properties>
+          <property 
+            name="tempCsvFile" 
+            value="D://KnowledgeRankingTemp_#{jobProperties['asOf']}.csv" />      
+        </properties>
+        <chunk item-count="5">
+          <reader    ref="AccountReader" />
+          <processor ref="KnowledgeCountProcessor" />
+          <writer    ref="RankingCsvWriter" />
+        </chunk>
+      </step>
+
+      <step id="SortTempCsv_KR">
+        <properties>
+          <property 
+            name="tempCsvFile" 
+            value="D://KnowledgeRankingTemp_#{jobProperties['asOf']}.csv" />      
+          <property 
+            name="sortedCsvFile" 
+            value="D://KnowledgeRanking_#{jobProperties['asOf']}.csv" />      
+        </properties>
+        <listeners>
+          <listener ref="CleanUpTempCsvFileListener" />      
+        </listeners>
+        <batchlet ref="RankingCsvSorter" />
+      </step>      
+    </flow>
+
+    <flow id="CommentRanking">
+      <step id="CountComment" next="SortTempCsv_CR">
+        <properties>
+          <property 
+            name="tempCsvFile" 
+            value="D://CommentRankingTemp_#{jobProperties['asOf']}.csv" />      
+        </properties>
+        <chunk item-count="5">
+          <reader    ref="AccountReader" />
+          <processor ref="CommentCountProcessor" />
+          <writer    ref="RankingCsvWriter" />
+        </chunk>
+      </step>
+
+      <step id="SortTempCsv_CR">
+        <properties>
+          <property 
+            name="tempCsvFile" 
+            value="D://CommentRankingTemp_#{jobProperties['asOf']}.csv" />      
+          <property 
+            name="sortedCsvFile" 
+            value="D://CommentRanking_#{jobProperties['asOf']}.csv" />      
+        </properties>
+        <listeners>
+          <listener ref="CleanUpTempCsvFileListener" />      
+        </listeners>
+        <batchlet ref="RankingCsvSorter" />
+      </step>      
+    </flow>
+  </split> 
+
+  <decision id="StatusCheck" ref="StatusDecider">
+      <end  on="SUCCESS" exit-status="RC0" />
+      <end  on="WARN"  exit-status="RC4" />
+      <fail on="ERROR" exit-status="RC8" />
+  </decision>
+      
+</job>

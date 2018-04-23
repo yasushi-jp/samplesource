@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <composite:interface>
+        <composite:attribute name="userId" required="true" />
+        <composite:attribute name="password" required="true" />
+        <composite:attribute name="userIdLabel" default="ユーザID" />
+        <composite:attribute name="passwordLabel" default="パスワード" />
+        <composite:attribute name="loginButtonValue" default="ログイン" />
+        <composite:attribute name="loginButtonAction"
+                             method-signature="java.lang.String action()" required="true"/>
+    </composite:interface>
+
+    <composite:implementation>
+        <div class="entry">
+            <div>
+                <label for="userId">#{cc.attrs.userIdLabel}</label>
+                <div>
+                    <h:inputText id="userId" value="#{cc.attrs.userId}"/>
+                    <h:message for="userId" errorClass="error"/>
+                </div>
+            </div>
+            <div>
+                <label for="password">#{cc.attrs.passwordLabel}</label>
+                <div>
+                    <h:inputSecret id="password" value="#{cc.attrs.password}"/>
+                    <h:message for="password" errorClass="error"/>
+                </div>
+            </div>
+            <div>
+                <h:commandButton action="#{cc.attrs.loginButtonAction}" value="#{cc.attrs.loginButtonValue}"/>
+            </div>
+        </div>
+    </composite:implementation>
+</html>

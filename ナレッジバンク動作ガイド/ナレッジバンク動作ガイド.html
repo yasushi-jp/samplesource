@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ナレッジバンク動作ガイド</title>
+	<style type="text/css">
+	  p {padding-left: 2em;}
+	</style>
+  </head>
+  <body>
+  <div>
+    <h1>ナレッジバンク動作ガイド</h1>
+    <p>
+このガイドは、ナレッジバンクアプリケーションを動作させるためのガイドです。
+このガイドを実施する前にまず、Oracle JDKとNetBeansのインストールが完了している必要があります。
+まだ、完了していない場合は、Java EE 7 徹底入門の第1章にある「1.4.1 Oracle JDKのインストール」と
+「1.4.2 NetBeansのインストール」を実施して下さい。
+    </p>
+    <hr/>
+    <h2>１．Oracle Database Express Edition 11g Release 2</h2>
+    <h3>１－１．Oracle Database Express Edition 11g Release 2のインストール</h3>
+    <p>
+ナレッジバンクのデータベースにはOracle Database Express Edition（Oracle XE）を使用します。
+そのため、まずOracle XEをインストールする必要があります。<br>
+Oracle XE は無償で入手・利用することができます。
+    </p>
+    <h4>・Oracle Database Express Edition 11g Release 2のダウンロード</h4>
+    <p>
+      Oracle Database Express Edition 11g Release 2を次のURLから入手します。
+    </p>
+    <ul>
+      <li>
+        Oracle Database Express Edition 11g Release 2<br />
+        <a href="http://www.oracle.com/technetwork/jp/database/database-technologies/express-edition/downloads/index.html" target="_brank">http://www.oracle.com/technetwork/jp/database/database-technologies/express-edition/downloads/index.html</a>
+      </li>
+    </ul>
+    <p>
+URLにアクセスすると「Oracle Database Express Edition 11g Release 2」のダウンロードサイトが表示されます。ここでライセンス条項を確認後、「ライセンスに同意する」のラジオボタンをクリックし、
+自身の環境に応じたZipファイルを入手してください。
+Java EE 7 徹底入門ではWindows 環境（64ビット）で開発を進めるため、「Windows x64」のインストーラを入手します。
+「Oracle Database Express Edition 11g Release 2 for Windows x64」のリンクをクリックしてファイルを入手してください。
+    </p>
+    <p>
+サインイン画面が表示されたらOTNアカウントのユーザ名とパスワードを入力します。OTNアカウントを作成してない場合は「プロファイルの作成」からOTNアカウントを作成してください。
+    </p>
+    <p>
+ファイルを入手するとダウンロード先に「OracleXE112_Win64.zip」ファイルが保存されます。
+    </p>
+    <h4>・Oracle Database Express Edition 11g Release 2のインストール</h4>
+    <p>
+zipファイルを展開するとDISK1フォルダのなかにsetup.exeがありますので、そのファイルをダブルクリックしてインストーラを起動します。
+    </p>
+    <p>
+インストーラファイルをダブルクリックすると以下の画面が表示されますので「次へ」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/1-1.png" />
+    </p>
+    <p>
+使用許諾条項が表示されるため使用許諾条項を確認し、「使用承諾条項に同意する」をチェックし、「次へ」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/1-2.png" />
+    </p>
+    <p>
+インストール先のフォルダが表示されるため問題ないことを確認し、「次へ」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/1-3.png" />
+    </p>
+    <p>
+SYSTEMユーザのパスワード入力画面が表示されるため、パスワードを入力し、「次へ」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/1-4.png" />
+    </p>
+    <p>
+インストール内容を確認し、「インストール」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/1-5.png" />
+    </p>
+    <p>
+インストールが完了すると、完了画面が表示されるため、「完了」ボタンをクリックし終了します。
+    </p>
+    <p>
+<img src="img/1-6.png" />
+    </p>
+    <h3>１－２．接続ユーザの作成と管理コンソールのポート変更</h3>
+    <p>
+次にデータベースに接続するためのユーザを作成します。<br>
+なお、Oracle XEの管理コンソールはポート8080で起動するため、そのままではGlassFishのポートと競合してしまいます。<br>
+そのため、ユーザ作成と同時にOracle XEの管理コンソールのポートを8081に変更します。
+    </p>
+    <p>
+「スタート」メニューから「すべてのプログラム」を選択し「Oracle Database 11g Express Edition」フォルダ内にある「SQLコマンドラインの実行」を起動します。
+    </p>
+    <p>
+コマンドラインが起動したら以下のコマンド(青文字部分)を実行します。
+    </p>
+
+    <p>
+SQL> <font color="blue">connect system/********</font> （SYSTEMユーザに設定したパスワード）<br>
+<br>
+SQL> <font color="blue">create user <i>接続ユーザ名</i> identified by <i>接続パスワード</i>;</font><br>
+<br>
+SQL> <font color="blue">grant connect, resource to 接続ユーザ名;</font><br>
+<br>
+SQL> <font color="blue">exec dbms_xdb.sethttpport(8081)</font><br>
+<br>
+SQL> <font color="blue">exit</font><br>
+    </p>
+    <hr/>
+    <h2>２．GlassFishの設定</h2>
+    <h3>２－１．データベースの設定</h3>
+    <p>
+GlassFishにデータベースへの接続設定を行います。
+    </p>
+    <h4>・JDBCドライバーの配置</h4>
+    <p>
+GlassFishとデータベースを接続するにはデータベースの種類に合わせたJDBCドライバーが必要です。
+Oracle XEのドライバーは、Oracle XEをインストールしたフォルダのjdbcフォルダ「C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib」にあるojdbc6.jarまたは、
+以下のサイトからojdbc7.jarをダウンロードします。
+    </p>
+    <ul>
+      <li>
+        Oracle JDBC<br />
+        <a href="http://www.oracle.com/technetwork/database/features/jdbc/index.html" target="_brank">http://www.oracle.com/technetwork/database/features/jdbc/index.html</a>
+      </li>
+    </ul>
+    <p>
+取得したojdbc6.jar（ojdbc7.jar）をGlassFish のインストール先にある「glassfish\lib」ディレクトリへコピーします。
+    </p>
+    <h4>・GlassFishサーバの起動</h4>
+    <p>
+コネクションプールの作成はGlassFishサーバーを起動してから管理コンソール上で行ないます。まずはNetBeansを起動し、サービスタブのサーバ内にあるGlassFishを右クリックしてGlassFishを起動します。
+    </p>
+    <p>
+<img src="img/2-1.png" />
+    </p>
+    <p>
+起動が完了したらGlassFishサーバを右クリックして「ドメイン管理コンソールの表示」を選択し管理コンソールにログインします。
+    </p>
+    <p>
+<img src="img/2-2.png" />
+    </p>
+    <h4>・JDBCコネクションプールの作成</h4>
+    <p>
+コネクションプールを作成します。左側のメニューから［Resources &gt; JDBC &gt; JDBC Connection Pools］を選択します。
+    </p>
+    <p>
+<img src="img/2-3.png" />
+    </p>
+    <p>
+「New...」ボタンをクリックして新しくコネクションプールを作成します。
+    </p>
+    <p>
+<img src="img/2-4.png" />
+    </p>
+    <p>
+［Pool Name］に任意のコネクションプールの名前として「knowledgebankPool」、
+［Resource Type］に「javax.sql.DataSource」、
+［Database Driver Vendor］に「Oracle」を選択し、「Next」ボタンをクリックして次の画面へ遷移します。
+    </p>
+    <p>
+<img src="img/2-5.png" />
+    </p>
+      <p style="padding-left: 6em">
+      <font color=red><b>※注：</b></font><br>
+      「Next」ボタンクをクリックしたタイミングで、下記のようなエラーが出ることがあります。(GlassFishの<a href="https://java.net/jira/browse/GLASSFISH-21314">既知の問題</a>が原因です)<br>
+      その場合は、後述の対処手順でコネクションプールとJDBCリソースを作成したのち、次の「２－２．認証認可の設定」へ進んでください。<br>
+      → <a href="#jdbc_err">対処手順へ</a><br>
+      <img src="img/2-x.png" />
+      </p>
+    <p>
+［Datasource Classname］に［oracle.jdbc.pool.OracleDataSource］が選択されていることを確認し、プロパティを設定します。
+[User]にOracle XEをインストール時に作成した接続ユーザ、
+[Password]に接続ユーザのパスワード、
+[URL]に「jdbc:oracle:thin:@localhost:1521:xe」を設定し、「Finish」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/2-6.png" />
+    </p>
+    <h4>・JDBCリソースの作成</h4>
+    <p>
+JDBCリソースを作成します。左側のメニューから［Resources &gt; JDBC &gt; JDBC Resources］を選択します。
+    </p>
+    <p>
+<img src="img/2-7.png" />
+    </p>
+    <p>
+「New...」ボタンをクリックして新しくJDBCリソースを作成します。
+    </p>
+    <p>
+<img src="img/2-8.png" />
+    </p>
+    <p>
+［JNDI Name］に「jdbc/eebook」、
+［Pool Name］に「knowledgebankPool」選択し、OKボタンをクリックします。
+    </p>
+    <p>
+<img src="img/2-9.png" />
+    </p>
+    <h3 id="create_realm">２－２．認証認可の設定</h3>
+    <p>
+GlassFishに認証認可の設定を行います。
+    </p>
+    <h4>・レルムの作成</h4>
+    <p>
+レルムを作成します。左側のメニューから［Configurations &gt; server-config &gt; Security &gt; Realms］を選択し、「New...」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/2-10.png" />
+    </p>
+    <p>
+以下の項目を入力し、「OK」ボタンをクリックします。
+    </p>
+    <table border="1">
+      <tr>
+        <th>項目</th>
+        <th>設定値</th>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td>任意（jdbc-realm など）</td>
+      </tr>
+      <tr>
+        <td>Class Name</td>
+        <td>com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm</td>
+      </tr>
+      <tr>
+        <td>JAAS Context</td>
+        <td>jdbcRealm</td>
+      </tr>
+      <tr>
+        <td>JNDI</td>
+        <td>jdbc/eebook</td>
+      </tr>
+      <tr>
+        <td>User Table</td>
+        <td>account</td>
+      </tr>
+      <tr>
+        <td>User Name Column</td>
+        <td>user_id</td>
+      </tr>
+      <tr>
+        <td>Password Column</td>
+        <td>password</td>
+      </tr>
+      <tr>
+        <td>Group Table</td>
+        <td>account</td>
+      </tr>
+      <tr>
+        <td>Group Table User Name Column</td>
+        <td>user_id</td>
+      </tr>
+      <tr>
+        <td>Group Name Column</td>
+        <td>account_group</td>
+      </tr>
+      <tr>
+        <td>Password Encryption Algorithm</td>
+        <td>digest-algorithm</td>
+      </tr>
+      <tr>
+        <td>Digest Algorithm</td>
+        <td>SHA-256</td>
+      </tr>
+      <tr>
+        <td>Encoding</td>
+        <td>Hex</td>
+      </tr>
+    </table>
+    <p>
+<img src="img/2-11.png" />
+    </p>
+    <p>
+作成したレルムを設定します。左側のメニューから［Configurations &gt; server-config &gt; Security］を選択し、
+[Default Realm]に作成した「jdbc-realm」を選択し、「Save」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/2-12.png" />
+    </p>
+    <hr />
+    <h2>３．サンプルアプリケーション</h2>
+    <h3>３－１．サンプルアプリケーションの実行</h3>
+    <h4>・プロジェクトを開く</h4>
+    <p>
+NetBeansを起動してサンプルアプリケーションを開きます。
+ファイルから「プロジェクトを開く」をクリックします。
+    </p>
+    <p>
+<img src="img/3-1.png" />
+    </p>
+    <p>
+サンプルソースにあるすべてのプロジェクトを選択し、「プロジェクトを開く」ボタンをクリックします。
+    </p>
+    <p>
+<img src="img/3-2.png" />
+    </p>
+      <p style="padding-left: 6em">
+      <font color=red><b>※注2：</b></font><br>
+      GlassFish4.1.1ではJSFのConverterでEJBがインジェクトできない問題があるようです(<a href="https://java.net/jira/browse/GLASSFISH-21454">GLASSFISH-21454</a>)。
+      そのため開いたプロジェクトのknowledgebankプロジェクトのソースコードを修正する必要があります。
+      → <a href="#converter_err">コード修正手順へ</a><br>
+      </p>
+    <h4 id="start_knowledgebank">・ナレッジバンクの起動</h4>
+    <p>
+knowledgebankを右クリックして、「実行」をクリックします。
+    </p>
+    <p>
+<img src="img/3-3.png" />
+    </p>
+    <p>
+デプロイメント・サーバを選択画面が表示された場合は、GlassFish Serverを選択し、
+永久に記憶をチェックしてから、OKボタンをクリックします。
+    </p>
+    <p>
+<img src="img/3-4.png" />
+    </p>
+    <p>
+設定が完了していれば、ブラウザでナレッジバンクのサンプルアプリケーションが起動します。
+    </p>
+    <p>
+<img src="img/3-5.png" />
+    </p>
+    <h3>３－２．サンプルデータの登録</h3>
+    <p>
+このまま「アカウント登録」のリンクから新しいアカウントを作成して利用することもできますが、本誌と同じ状態にするために、ログイン前にサンプルデータを登録します。    </p>
+    
+    <h4>・JSF用サンプルデータの登録</h4>
+    <p>
+ダウンロードしたzipファイル内の「サンプルデータ」フォルダの中にあるファイル「data4JSF.sql」を、PC の任意の場所（例：c:\tmp）に展開してください。</p>
+    </p>
+    <p>
+「スタート」メニューから「すべてのプログラム」を選択し「Oracle Database 11g Express Edition」フォルダ内にある「SQLコマンドラインの実行」を起動します。
+    </p>
+    <p>
+コマンドラインが起動したら以下のコマンド(青文字部分)を実行します。<br>
+<b>注：これまで登録したデータは全て消去されます</b>
+    </p>
+    <p>
+SQL> <font color="blue">connect <i>接続ユーザ名</i>/<i>接続パスワード</i></font><br>
+<br>
+SQL> <font color="blue">@c:\tmp\data4JSF.sql</font><br>
+<br>
+SQL> <font color="blue">exit</font><br>
+    </p>
+    <p>
+登録されているユーザIDは、"ichiro", "jiro", "hanako" の3人です。"ichiro"が管理者ユーザで、他の2名は一般ユーザです。<br>
+パスワードは3人とも共通で "J@vaEE7" です。
+    </p>
+
+    <h4>・JPA用サンプルデータの登録</h4>
+    <p>
+本誌 P300 に掲載されているデータを登録します。<br>
+ダウンロードしたzipファイル内の「サンプルデータ」フォルダの中にあるファイル「data4JPA.sql」を、PC の任意の場所（例：c:\tmp）に展開してください。
+    </p>
+    <p>
+「スタート」メニューから「すべてのプログラム」を選択し「Oracle Database 11g Express Edition」フォルダ内にある「SQLコマンドラインの実行」を起動します。
+    </p>
+    <p>
+コマンドラインが起動したら以下のコマンド(青文字部分)を実行します。<br>
+<b>注：これまで登録したデータは全て消去されます</b>
+    </p>
+    <p>
+SQL> <font color="blue">connect <i>接続ユーザ名</i>/<i>接続パスワード</i></font><br>
+<br>
+SQL> <font color="blue">@c:\tmp\data4JPA.sql</font><br>
+<br>
+SQL> <font color="blue">exit</font><br>
+    </p>
+    <p>
+登録されているユーザIDは、"chihiro.i", "yoshio.t" の2人です。パスワードはどちらも、"J@vaEE7" です。<br>
+既にデータがある状態から上記の手順でデータを入れ替えた場合は、GlassFishを再起動してください。
+    </p>
+
+    <h4>・jBatch用サンプルデータの登録</h4>
+    <p>
+ 本誌 P532 の注釈欄で言及している手順はこちらになります。<br>
+ダウンロードしたzipファイル内の「サンプルデータ」フォルダの中にあるファイル「data4jBatch.sql」を、PC の任意の場所（例：c:\tmp）に展開してください。
+    </p>
+    <p>
+「スタート」メニューから「すべてのプログラム」を選択し「Oracle Database 11g Express Edition」フォルダ内にある「SQLコマンドラインの実行」を起動します。
+    </p>
+    <p>
+コマンドラインが起動したら以下のコマンド(青文字部分)を実行します。<br>
+<b>注：これまで登録したデータは全て消去されます</b>
+    </p>
+    <p>
+SQL> <font color="blue">connect <i>接続ユーザ名</i>/<i>接続パスワード</i></font><br>
+<br>
+SQL> <font color="blue">@c:\tmp\data4jBatch.sql</font><br>
+<br>
+SQL> <font color="blue">exit</font><br>
+    </p>
+    <p>
+jBatch用のテストページのURLは <a href="http://localhost:8080/knowledgebank/faces/batch_start.xhtml">http://localhost:8080/knowledgebank/faces/batch_start.xhtml</a> ですが、この画面へのアクセスはログイン不要です。<br>
+また、通常どおりナレッジバンクの画面にログインすることもできます。<br>
+登録されているユーザIDは、"ichiro", "jiro", "saburo" 他、合計11人です。パスワードはいずれのユーザも "J@vaEE7" です。<br>
+既にデータがある状態から上記の手順でデータを入れ替えた場合は、GlassFishを再起動してください。
+    </p>
+  </div>
+  
+  <hr>
+  <div id="jdbc_err">
+    <h3>※注：JDBCコネクションプールの作成でエラーが発生した場合の対処手順</h3>
+    <p>
+GlassFishのツールである"asadmin"コマンドを利用して、コネクションプールとJDBCリソースを作成します。<br>
+「スタート」メニューから「プログラムとファイルの検索」ボックスに "cmd" と入力するなどして、コマンドプロンプトを起動します。<br>
+その後、GlassFishをインストールしたフォルダの配下にあるbinディレクトリ（例：C:\Program Files\glassfish-4.1.1\bin）に移動して、
+以下のコマンド(青文字部分)を実行します。
+    </p>
+    <h4>・JDBCコネクションプールの作成</h4>
+<p style="padding-left: 5em">
+C:\Program Files\glassfish-4.1.1\bin> <font color="blue">asadmin create-jdbc-connection-pool --datasourceclassname oracle.jdbc.pool.OracleDataSource --restype javax.sql.DataSource --property user=<i>接続ユーザ名</i>:password=<i>接続パスワード</i>:url="jdbc\:oracle\:thin\:@localhost\:1521\:xe" knowledgebankPool</font><br>
+<br>
+JDBC connection pool knowledgebankPool created successfully.<br>
+Command create-jdbc-connection-pool executed successfully.<br>
+</p>
+    <h4>・JDBCリソースの作成</h4>
+<p style="padding-left: 5em">
+C:\Program Files\glassfish-4.1.1\bin> <font color="blue">asadmin create-jdbc-resource --connectionpoolid knowledgebankPool jdbc/eebook</font><br>
+<br>
+JDBC resource jdbc/eebook created successfully.<br>
+Command create-jdbc-resource executed successfully.<br>
+</p>
+コネクションプールとJDBCリソースが作成できたら、次の「２－２．認証認可の設定」へ戻ります。<br>
+→ <a href="#create_realm">２－２．認証認可の設定</a><br>
+  </div>
+  <hr>
+  <div id="converter_err">
+    <h3>※注2：GlassFish 4.1.1の不具合(GLASSFISH-21454)に対するソースコードの修正</h3>
+    <h4>CategoryIdConverter.javaの修正</h4>
+    <p>
+CategoryIdConverter.javaに @Named（javax.inject.Named）と @RequestScoped（javax.enterprise.context.RequestScoped）を追加します。
+    </p>
+    <h5>修正前</h5>
+    <pre style="border: 1px solid #333;">@FacesConverter("categoryId")
+public class CategoryIdConverter implements Converter {</pre>
+    <h5>修正後</h5>
+    <pre style="border: 1px solid #333;">@FacesConverter("categoryId")
+@Named
+@RequestScoped
+public class CategoryIdConverter implements Converter {</pre>
+    <h4>index.xhtml、entry.xhtml、 edit.xhtmlの修正</h4>
+    <p>
+index.xhtml(18行目)、entry.xhtml(25行目)、edit.xhtml(29行目)のconverter属性の記載を修正します。
+    </p>
+    <h5>修正前</h5>
+    <pre style="border: 1px solid #333;">converter="categoryId" </pre>
+    <h5>修正後</h5>
+    <pre style="border: 1px solid #333;">converter="#{categoryIdConverter}" </pre>
+    <p>
+ソースコードを修正したら、次の「・ナレッジバンクの起動」へ戻ります。<br>
+→ <a href="#start_knowledgebank">・ナレッジバンクの起動</a>
+    </p>
+  </div>
+  <hr>
+  <div align="right">
+  2015/12/21 v1.0.2
+  </div>  
+  </body>
+</html>

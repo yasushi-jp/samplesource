@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+     version="1.0"
+     id="KnowledgeRanking">
+    
+  <properties>
+    <property name="asOf" value ="#{jobParameters['asofdate']}" />
+    <property name="tempCsvFile" value="D://KnowledgeRankingTemp_#{jobProperties['asOf']}.csv" />      
+  </properties>
+
+  <step id="CountKnowledge" next="SortTempCsv">
+    <chunk item-count="5">
+      <reader    ref="AccountReader" />
+      <processor ref="KnowledgeCountProcessor" />
+      <writer    ref="RankingCsvWriter" />
+    </chunk>
+  </step>
+
+  <step id="SortTempCsv">
+    <properties>
+      <property name="sortedCsvFile" value="D://KnowledgeRanking_#{jobProperties['asOf']}.csv" />      
+    </properties>
+    <listeners>
+      <listener ref="CleanUpTempCsvFileListener" />      
+    </listeners>
+    <batchlet ref="RankingCsvSorter" />
+  </step>
+
+</job>

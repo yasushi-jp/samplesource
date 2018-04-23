@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+     version="1.0"
+     id="CommentRanking">
+    
+  <properties>
+    <property name="asOf" value ="#{jobParameters['asofdate']}" />
+    <property name="tempCsvFile" value="D://CommentRankingTemp_#{jobProperties['asOf']}.csv" />      
+  </properties>
+
+  <step id="CountComment" next="SortTempCsv">
+    <chunk item-count="5">
+      <reader    ref="AccountReader" />
+      <processor ref="CommentCountProcessor" />
+      <writer    ref="RankingCsvWriter" />
+    </chunk>
+  </step>
+
+  <step id="SortTempCsv">
+    <properties>
+      <property name="sortedCsvFile" value="D://CommentRanking_#{jobProperties['asOf']}.csv" />      
+    </properties>
+    <listeners>
+      <listener ref="CleanUpTempCsvFileListener" />      
+    </listeners>
+    <batchlet ref="RankingCsvSorter" />
+  </step>
+
+</job>

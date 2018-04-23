@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <body>
+        <ui:composition template="/template/knowledgeTemplate.xhtml">
+            <ui:define name="content">
+                <f:metadata>
+                    <f:viewParam name="id" value="#{knowledgeShowBean.id}" />
+                    <f:viewAction action="#{knowledgeShowBean.show()}" />
+                </f:metadata>
+                <h:form id="form">
+                    <h1>ナレッジ詳細</h1>
+                    <h:messages globalOnly="true"/>
+                    <table class="table">
+                        <tr>
+                            <th>タイトル</th>
+                            <td>
+                                #{knowledgeShowBean.knowledge.title}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>カテゴリ</th>
+                            <td>
+                                <ui:repeat var="category" value="#{knowledgeShowBean.knowledge.categoryList}">
+                                    #{category.name}<br />
+                                </ui:repeat>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>内容</th>
+                            <td class="pre">#{knowledgeShowBean.knowledge.description}</td>
+                        </tr>
+                        <tr>
+                            <th>投稿者</th>
+                            <td>
+                                #{knowledgeShowBean.knowledge.account.name}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>登録日時</th>
+                            <td>
+                                <h:outputText value="#{knowledgeShowBean.knowledge.createAt}">
+                                    <f:convertDateTime pattern="yyyy/MM/dd HH:mm:dd" />
+                                </h:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>更新日時</th>
+                            <td>
+                                <h:outputText value="#{knowledgeShowBean.knowledge.updateAt}">
+                                    <f:convertDateTime pattern="yyyy/MM/dd HH:mm:dd" />
+                                </h:outputText>
+                            </td>
+                        </tr>
+                    </table>
+                    <div jsf:id="buttons" jsf:rendered="#{loginSession.account.id eq knowledgeShowBean.knowledge.account.id}">
+                        <h:button outcome="/knowledge/edit" value="変更">
+                            <f:param name="id" value="#{knowledgeShowBean.id}" />
+                        </h:button>
+                        <h:commandButton action="#{knowledgeShowBean.remove()}" value="削除" onclick="return confirmMsg();"/>
+                    </div>
+                    <h1>コメント</h1>
+                    <div jsf:id="comments">
+                        <ui:repeat var="row" value="#{knowledgeShowBean.knowledge.knowledgeCommentList}">
+                            <div class="comment">
+                                <div class="datetime">
+                                    <h:outputText value="#{row.createAt}">
+                                        <f:convertDateTime pattern="yyyy/MM/dd HH:mm:dd" />
+                                    </h:outputText>
+                                </div>
+                                <div class="user">#{row.account.name}</div>
+                                <div class="message">#{row.message}</div>
+                            </div>
+                        </ui:repeat>
+                        <div>
+                            <h:inputTextarea id="message" value="#{knowledgeShowBean.knowledgeComment.message}" />
+                        </div>
+                        <div>
+                            <h:commandButton action="#{knowledgeShowBean.addComment()}" value="コメント投稿">
+                                <f:ajax execute="message" render="comments" />
+                            </h:commandButton>
+                        </div>
+                    </div>
+                </h:form>
+           </ui:define>
+        </ui:composition>
+    </body>
+</html>

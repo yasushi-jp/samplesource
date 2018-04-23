@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <meta charset="UTF-8" />
+        <h:outputStylesheet library="css" name="style.css" />
+        <h:outputScript name="jsf.js" library="javax.faces"/>
+        <h:outputScript library="js" name="application.js" />
+        <title>Knowledge Bank</title>
+    </h:head>
+    <h:body>
+        <div id="top_content">
+            <h:form id="form">
+                <h1>#{msg['title.account.register']}</h1>
+                <div class="entry">
+                    <div>
+                        <label>#{msg['entity.account.userId']}</label>
+                        <div>
+                            <h:inputText id="userId" value="#{accountBean.account.userId}" />
+                            <h:message for="userId" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>#{msg['entity.account.name']}</label>
+                        <div>
+                            <h:inputText id="name" value="#{accountBean.account.name}" />
+                            <h:message for="name" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>#{msg['entity.account.mail']}</label>
+                        <div>
+                            <h:inputText id="mail" value="#{accountBean.account.mail}" />
+                            <h:message for="mail" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>#{msg['entity.account.password']}</label>
+                        <div>
+                            <h:inputSecret id="password" value="#{accountBean.password}" />
+                            <h:message for="password" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <h:commandButton action="#{accountBean.register()}" value="#{msg['button.register']}" />
+                    </div>
+                </div>
+                <div>
+                    <h:link outcome="/login" value="#{msg['button.return']}"/>
+                </div>
+            </h:form>
+        </div>
+    </h:body>
+</html>

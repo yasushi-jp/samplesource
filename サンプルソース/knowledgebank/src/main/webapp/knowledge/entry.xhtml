@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="/template/knowledgeTemplate.xhtml">
+            <ui:define name="content">
+                <h1>ナレッジ投稿</h1>
+                <h:form id="form">
+                    <div class="entry">
+                        <div>
+                            <label>タイトル</label>
+                            <div>
+                                <h:inputText id="title" value="#{knowledgeEntryBean.knowledge.title}">
+                                    <f:ajax event="blur" render="titleError" />
+                                </h:inputText>
+                                <h:message for="title" id="titleError" errorClass="error"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>カテゴリ</label>
+                            <div>
+                                <h:selectManyCheckbox id="category" value="#{knowledgeEntryBean.knowledge.categoryList}" converter="categoryId">
+                                    <f:selectItems value="#{categorySession.categoryList}" var="c" itemLabel="#{c.name}" itemValue="#{c}" />
+                                </h:selectManyCheckbox>
+                                <h:message for="category" errorClass="error"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label>内容</label>
+                            <div>
+                                <h:inputTextarea id="description" value="#{knowledgeEntryBean.knowledge.description}" />
+                                <h:message for="description" errorClass="error"/>
+                            </div>
+                        </div>
+                        <div>
+                            <h:commandButton action="#{knowledgeEntryBean.save()}" value="投稿" />
+                        </div>
+                    </div>
+               </h:form>
+           </ui:define>
+        </ui:composition>
+    </body>
+</html>

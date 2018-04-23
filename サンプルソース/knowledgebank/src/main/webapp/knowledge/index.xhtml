@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+    <body>
+        <ui:composition template="/template/knowledgeTemplate.xhtml">
+            <ui:define name="content">
+                <f:metadata>
+                    <f:viewAction action="#{knowledgeBean.list()}" onPostback="true"/>
+                </f:metadata>
+                <div class="search">
+                    <h:form id="searchForm">
+                        <h:inputText p:type="search" value="#{knowledgeBean.searchString}" />
+                        <h:commandButton value="検索" />
+                        <h:selectManyCheckbox value="#{knowledgeBean.categoryList}" converter="categoryId">
+                            <f:selectItems value="#{categorySession.categoryList}"
+                                             var="c" itemLabel="#{c.name}" itemValue="#{c}" />
+                        </h:selectManyCheckbox>
+                    </h:form>
+                </div>
+                <h1>ナレッジ一覧</h1>
+                <h:messages globalOnly="true" />
+                <table class="table">
+                    <tr>
+                        <th>タイトル</th>
+                        <th>カテゴリ</th>
+                        <th>投稿者</th>
+                        <th>登録日時</th>
+                        <th>更新日時</th>
+                    </tr>
+                    <ui:repeat var="row" value="#{knowledgeBean.knowledgeList}">
+                        <tr>
+                            <td>
+                                <h:link outcome="/knowledge/show" value="#{row.title}">
+                                    <f:param name="id" value="#{row.id}" />
+                                </h:link>
+                            </td>
+                            <td>
+                                <ui:repeat var="category" value="#{row.categoryList}">
+                                    #{category.name}<br />
+                                </ui:repeat>
+                            </td>
+                            <td>#{row.account.name}</td>
+                            <td>
+                                <h:outputText value="#{row.createAt}">
+                                    <f:convertDateTime pattern="yyyy/MM/dd HH:mm:dd" />
+                                </h:outputText>
+                            </td>
+                            <td>
+                                <h:outputText value="#{row.updateAt}">
+                                    <f:convertDateTime pattern="yyyy/MM/dd HH:mm:dd" />
+                                </h:outputText>
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                </table>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

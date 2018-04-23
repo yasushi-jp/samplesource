@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <head jsf:id="head">
+        <meta charset="UTF-8" />
+        <link href="../resources/css/style.css" rel="stylesheet" type="text/css"
+              jsf:library="css" jsf:name="style.css" />
+        <h:outputScript name="jsf.js" library="javax.faces"/>
+        <script type="text/javascript"  src="../resources/js/application.js"
+                jsf:library="js" jsf:name="application.js" />
+        <title>Knowledge Bank</title>
+    </head>
+    <body jsf:id="body">
+        <div id="top_content">
+            <form jsf:id="form">
+                <h1>アカウント登録</h1>
+                <div class="entry">
+                    <div>
+                        <label>ユーザID</label>
+                        <div>
+                            <input type="text" jsf:id="userId" jsf:value="#{accountBean.account.userId}" />
+                            <h:message for="userId" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>名前</label>
+                        <div>
+                            <input type="text" jsf:id="name" jsf:value="#{accountBean.account.name}" />
+                            <h:message for="name" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>メールアドレス</label>
+                        <div>
+                            <input type="text" jsf:id="mail" jsf:value="#{accountBean.account.mail}" />
+                            <h:message for="mail" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label>パスワード</label>
+                        <div>
+                            <input type="password" jsf:id="password" jsf:value="#{accountBean.password}" />
+                            <h:message for="password" errorClass="error"/>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" jsf:action="#{accountBean.register()}" jsf:value="登録" />
+                    </div>
+                </div>
+                <div>
+                    <a href="../login.xhtml" jsf:outcome="/login">戻る</a>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
